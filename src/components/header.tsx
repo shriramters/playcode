@@ -14,7 +14,7 @@ export default function Header() {
           <Button variant={theme} onClick={toggleTheme} className="me-2">
             {theme === 'light' ? <FaMoon /> : <FaSun />}
           </Button>
-          <Nav.Link href="https://github.com/InfiniteXyy/playcode" target="_blank">
+          <Nav.Link href="https://github.com/shriramters/playcode" target="_blank">
             <FaGithub style={{ height: '20px', width: '20px' }} />
           </Nav.Link>
         </Nav>

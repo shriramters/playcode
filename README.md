@@ -8,7 +8,9 @@ Based on these projects.
 
 ### Link
 
-https://infinitexyy.github.io/playcode/
+https://shriramters.github.io/playcode
+
+Original work: https://github.com/InfiniteXyy/playcode
 
 *or*
 
