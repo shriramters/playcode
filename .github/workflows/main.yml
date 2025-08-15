@@ -10,4 +10,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: publish github pages
-        run: yarn && yarn publish:gh
+        run: npm install && npm run publish:gh
