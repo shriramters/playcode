@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import { Card } from 'react-bootstrap'
 import { Terminal as Xterm } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import '@xterm/xterm/css/xterm.css'
@@ -54,5 +55,12 @@ export default function Terminal() {
     }
   }, [messagePort]) // messagePort is now memoized, so this effect will only run when messagePort itself changes
 
-  return <div className="h-full bg-black" ref={containerRef} />
+  return (
+    <Card className="h-100">
+      <Card.Header>Terminal</Card.Header>
+      <Card.Body className="p-0">
+        <div className="h-100 bg-black" ref={containerRef} />
+      </Card.Body>
+    </Card>
+  )
 }

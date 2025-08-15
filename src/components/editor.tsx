@@ -1,33 +1,37 @@
 import React from 'react'
+import { Card, Button } from 'react-bootstrap'
 import { LanguageExt, useRunner } from '../module'
 import LanguageSelector from './langauge-selector'
 import MonacoEditor from '@monaco-editor/react'
 import { IoPlay } from 'react-icons/io5'
 
 export default function Editor() {
-    const codeMap = useRunner((state) => state.codeMap)
+  const codeMap = useRunner((state) => state.codeMap)
   const language = useRunner((state) => state.language)
   const setCode = useRunner((state) => state.setCode)
   const runCode = useRunner((state) => state.runCode)
 
   return (
-    <div className="h-full flex flex-col">
-      <div className="h-[50px] flex items-center justify-between px-4 flex-shrink-0">
-        <span className="font-medium text-sm text-gray-700">{`test${LanguageExt[language]}`}</span>
-        <div className="flex items-center gap-2">
+    <Card className="h-100">
+      <Card.Header className="d-flex align-items-center justify-content-between">
+        <span className="fw-medium fs-6 text-secondary">{`test${LanguageExt[language]}`}</span>
+        <div className="d-flex align-items-center gap-2">
           <LanguageSelector />
-          <button className="focus:outline-transparent leading-none">
-            <IoPlay onClick={runCode} className="text-green-500 h-5 w-5" />
-          </button>
+          <Button variant="success" onClick={runCode}>
+            <IoPlay />
+          </Button>
         </div>
-      </div>
-      <MonacoEditor
-        value={codeMap[language]}
-        language={language}
-        options={{ fontSize: 17, minimap: { enabled: false }, wordWrap: 'on' }}
-        wrapperClassName="h-full"
-        onChange={(code) => setCode(code)}
-      />
-    </div>
+      </Card.Header>
+      <Card.Body className="p-0">
+        <MonacoEditor
+          value={codeMap[language]}
+          language={language}
+          options={{ fontSize: 17, minimap: { enabled: false }, wordWrap: 'on' }}
+          wrapperClassName="h-100"
+          onChange={(code) => setCode(code)}
+        />
+      </Card.Body>
+    </Card>
   )
 }
+
