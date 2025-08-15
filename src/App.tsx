@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 
 import clang from './assets/clang.wasm?url'
 import lld from './assets/lld.wasm?url'
@@ -10,9 +10,15 @@ import Header from './components/header'
 import Editor from './components/editor'
 import Terminal from './components/terminal'
 
-import { useRunner } from './module'
+import { useTheme } from './core/theme'
 
 console.log({ clang, lld, memfs, sysroot })
 export function App() {
+  const theme = useTheme((state) => state.theme)
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-bs-theme', theme)
+  }, [theme])
+
   return <Layout header={<Header />} left={<Editor />} right={<Terminal />} />
 }

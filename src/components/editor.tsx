@@ -4,12 +4,14 @@ import { LanguageExt, useRunner } from '../module'
 import LanguageSelector from './langauge-selector'
 import MonacoEditor from '@monaco-editor/react'
 import { IoPlay } from 'react-icons/io5'
+import { useTheme } from '../core/theme'
 
 export default function Editor() {
   const codeMap = useRunner((state) => state.codeMap)
   const language = useRunner((state) => state.language)
   const setCode = useRunner((state) => state.setCode)
   const runCode = useRunner((state) => state.runCode)
+  const theme = useTheme((state) => state.theme)
 
   return (
     <Card className="h-100">
@@ -26,6 +28,7 @@ export default function Editor() {
         <MonacoEditor
           value={codeMap[language]}
           language={language}
+          theme={theme === 'light' ? 'light' : 'vs-dark'}
           options={{ fontSize: 17, minimap: { enabled: false }, wordWrap: 'on' }}
           wrapperClassName="h-100"
           onChange={(code) => setCode(code)}
