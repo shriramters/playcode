@@ -14,13 +14,11 @@ export const useRunner = create(
   persist<{
     language: Language
     codeMap: Record<Language, string>
-    workerMap: { [key in Language]?: { worker: Worker; messagePort: MessagePort } }
     setCode: (code: string) => void
     setLanguage: (language: string) => void
     runCode: () => void
   }>(
     (set, get) => ({
-      workerMap,
       codeMap: {
         [Language.Cpp]: DefaultCppCode,
         [Language.Python]: DefaultPythonCode,
@@ -34,7 +32,7 @@ export const useRunner = create(
       },
       setLanguage: (language: Language) => set({ ...get(), language }),
       runCode() {
-        const { codeMap, language, workerMap } = get()
+        const { codeMap, language } = get()
         workerMap[language].messagePort.postMessage({ id: 'compileLinkRun', data: codeMap[language] })
       },
     }),
@@ -43,6 +41,7 @@ export const useRunner = create(
 )
 
 export const useMessagePort = () => {
-  const messagePort = useRunner((state) => state.workerMap[state.language]?.messagePort)
+  const { language } = useRunner()
+  const messagePort = workerMap[language]?.messagePort
   return React.useMemo(() => messagePort, [messagePort])
 }
