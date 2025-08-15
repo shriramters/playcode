@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Terminal as Xterm } from 'xterm'
-import { FitAddon } from 'xterm-addon-fit'
-import 'xterm/css/xterm.css'
+import { Terminal as Xterm } from '@xterm/xterm'
+import { FitAddon } from '@xterm/addon-fit'
+import '@xterm/xterm/css/xterm.css'
 import { useMessagePort } from '../module/runner'
 
 function debounce(fn: () => void, delay = 60) {
@@ -19,9 +19,12 @@ function debounce(fn: () => void, delay = 60) {
 export default function Terminal() {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const messagePort = useMessagePort()
+  const xtermRef = useRef<Xterm | null>(null); // Use a ref for xterm
 
   const [xterm] = useState(() => {
-    return new Xterm()
+    const newXterm = new Xterm();
+    xtermRef.current = newXterm; // Assign to ref
+    return newXterm;
   })
 
   useEffect(() => {
@@ -30,23 +33,26 @@ export default function Terminal() {
     xterm.loadAddon(fitAddon)
     const resizeObserver = new ResizeObserver(debounce(() => fitAddon.fit()))
     resizeObserver.observe(containerRef.current)
-    return () => {
-      resizeObserver.disconnect()
-    }
-  }, [])
 
-  useEffect(() => {
-    if (!messagePort) return
-    xterm.clear()
-    const onMessage = (event) => {
-      switch (event.data.id) {
-        case 'write':
-          xterm.writeln(event.data.data)
-          break
+    // Set up message listener here
+    if (messagePort) {
+      xterm.clear();
+      messagePort.onmessage = (event) => {
+        switch (event.data.id) {
+          case 'write':
+            xterm.writeln(event.data.data)
+            break
+        }
       }
     }
-    messagePort.onmessage = onMessage
-  }, [messagePort])
+
+    return () => {
+      resizeObserver.disconnect()
+      if (messagePort) {
+        messagePort.onmessage = null; // Clean up listener
+      }
+    }
+  }, [messagePort]) // messagePort is now memoized, so this effect will only run when messagePort itself changes
 
   return <div className="h-full bg-black" ref={containerRef} />
 }

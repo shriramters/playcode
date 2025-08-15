@@ -5,7 +5,8 @@ import { LanguageLabel, useRunner } from '../module'
 import clsx from 'clsx'
 
 export default function LanguageSelector() {
-  const { language, setLanguage } = useRunner(({ language, setLanguage }) => ({ language, setLanguage }))
+  const language = useRunner((state) => state.language)
+  const setLanguage = useRunner((state) => state.setLanguage)
 
   return (
     <div className="w-36 z-10">

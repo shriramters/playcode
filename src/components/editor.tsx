@@ -5,12 +5,10 @@ import MonacoEditor from '@monaco-editor/react'
 import { IoPlay } from 'react-icons/io5'
 
 export default function Editor() {
-  const { codeMap, language, setCode, runCode } = useRunner(({ codeMap, language, setCode, runCode }) => ({
-    codeMap,
-    language,
-    setCode,
-    runCode,
-  }))
+    const codeMap = useRunner((state) => state.codeMap)
+  const language = useRunner((state) => state.language)
+  const setCode = useRunner((state) => state.setCode)
+  const runCode = useRunner((state) => state.runCode)
 
   return (
     <div className="h-full flex flex-col">

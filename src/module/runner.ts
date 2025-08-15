@@ -1,8 +1,14 @@
-import create from 'zustand'
+import React from 'react'
+import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { DefaultPythonCode, DefaultCppCode, DefaultTypescriptCode } from '../examples'
 import { Language } from './types'
 import { initWorker } from './utils'
+
+const workerMap = {};
+for (const language of Object.values(Language)) {
+  workerMap[language] = initWorker(language)
+}
 
 export const useRunner = create(
   persist<{
@@ -11,11 +17,10 @@ export const useRunner = create(
     workerMap: { [key in Language]?: { worker: Worker; messagePort: MessagePort } }
     setCode: (code: string) => void
     setLanguage: (language: string) => void
-    init: () => void
     runCode: () => void
   }>(
     (set, get) => ({
-      workerMap: {},
+      workerMap,
       codeMap: {
         [Language.Cpp]: DefaultCppCode,
         [Language.Python]: DefaultPythonCode,
@@ -28,13 +33,6 @@ export const useRunner = create(
         set({ ...state, codeMap })
       },
       setLanguage: (language: Language) => set({ ...get(), language }),
-      init() {
-        set((state) => {
-          for (const language of Object.values(Language)) {
-            state.workerMap[language] = initWorker(language)
-          }
-        })
-      },
       runCode() {
         const { codeMap, language, workerMap } = get()
         workerMap[language].messagePort.postMessage({ id: 'compileLinkRun', data: codeMap[language] })
@@ -45,5 +43,6 @@ export const useRunner = create(
 )
 
 export const useMessagePort = () => {
-  return useRunner((state) => state.workerMap[state.language]?.messagePort)
+  const messagePort = useRunner((state) => state.workerMap[state.language]?.messagePort)
+  return React.useMemo(() => messagePort, [messagePort])
 }
