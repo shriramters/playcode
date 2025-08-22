@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Card, Button } from 'react-bootstrap'
 import { LanguageExt, useRunner } from '../module'
+import { useProblemStore, useProblemProgress } from '../module/problems'
 import LanguageSelector from './langauge-selector'
 import MonacoEditor from '@monaco-editor/react'
-import { IoPlay } from 'react-icons/io5'
+import { IoPlay, IoRefresh } from 'react-icons/io5'
 import { useTheme } from '../core/theme'
 
 export default function Editor() {
@@ -12,14 +13,44 @@ export default function Editor() {
   const setCode = useRunner((state) => state.setCode)
   const runCode = useRunner((state) => state.runCode)
   const theme = useTheme((state) => state.theme)
+  
+  const { currentProblem } = useProblemStore()
+  const { markProblemAttempted } = useProblemProgress()
+
+  // Load problem template when problem changes
+  useEffect(() => {
+    if (currentProblem && language === 'cpp') {
+      setCode(currentProblem.template)
+    }
+  }, [currentProblem, language, setCode])
+
+  const handleRunCode = () => {
+    if (currentProblem) {
+      markProblemAttempted(currentProblem.id)
+    }
+    runCode()
+  }
+
+  const handleResetTemplate = () => {
+    if (currentProblem && language === 'cpp') {
+      setCode(currentProblem.template)
+    }
+  }
 
   return (
     <Card className="h-100">
       <Card.Header className="d-flex align-items-center justify-content-between">
-        <span className="fw-medium fs-6 text-secondary">{`test${LanguageExt[language]}`}</span>
+        <span className="fw-medium fs-6 text-secondary">
+          {currentProblem ? `${currentProblem.title}${LanguageExt[language]}` : `test${LanguageExt[language]}`}
+        </span>
         <div className="d-flex align-items-center gap-2">
           <LanguageSelector />
-          <Button variant="success" onClick={runCode}>
+          {currentProblem && language === 'cpp' && (
+            <Button variant="outline-secondary" size="sm" onClick={handleResetTemplate}>
+              <IoRefresh />
+            </Button>
+          )}
+          <Button variant="success" onClick={handleRunCode}>
             <IoPlay />
           </Button>
         </div>

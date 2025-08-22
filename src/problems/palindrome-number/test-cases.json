@@ -1,0 +1,17 @@
+[
+  {
+    "input": "x = 121",
+    "expectedOutput": "true",
+    "description": "Positive palindrome"
+  },
+  {
+    "input": "x = -121",
+    "expectedOutput": "false",
+    "description": "Negative number"
+  },
+  {
+    "input": "x = 10",
+    "expectedOutput": "false",
+    "description": "Non-palindrome"
+  }
+]

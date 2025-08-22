@@ -1,0 +1,17 @@
+[
+  {
+    "input": "x = 123",
+    "expectedOutput": "321",
+    "description": "Positive number"
+  },
+  {
+    "input": "x = -123",
+    "expectedOutput": "-321",
+    "description": "Negative number"
+  },
+  {
+    "input": "x = 120",
+    "expectedOutput": "21",
+    "description": "Number with trailing zero"
+  }
+]
