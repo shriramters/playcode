@@ -5,7 +5,8 @@ import { FitAddon } from '@xterm/addon-fit'
 import '@xterm/xterm/css/xterm.css'
 import { useMessagePort } from '../module/runner'
 import { useProblemStore, useProblemProgress } from '../module/problems'
-import { parseTestOutput, ValidationResult } from '../utils/validation'
+import { parseTestOutput } from '../utils/validation'
+import { ValidationResult } from '../types/problems'
 import TestResults from './test-results'
 
 function debounce(fn: () => void, delay = 60) {

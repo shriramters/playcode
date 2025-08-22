@@ -1,7 +1,7 @@
 import React from 'react'
 import { Card, Alert, Badge, Row, Col, ProgressBar } from 'react-bootstrap'
 import { FaCheck, FaTimes } from 'react-icons/fa'
-import { ValidationResult } from '../utils/validation'
+import { ValidationResult } from '../types/problems'
 
 interface TestResultsProps {
   validationResult?: ValidationResult

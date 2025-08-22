@@ -1,18 +1,4 @@
-export interface TestResult {
-  testCase: number
-  passed: boolean
-  input: string
-  expectedOutput: string
-  actualOutput: string
-  error?: string
-}
-
-export interface ValidationResult {
-  allPassed: boolean
-  testResults: TestResult[]
-  compilationError?: string
-  runtime?: number
-}
+import { TestResult, ValidationResult, TestCase } from '../types/problems'
 
 export function validateOutput(expectedOutput: string, actualOutput: string): boolean {
   // Normalize outputs by trimming whitespace and removing extra newlines
@@ -24,7 +10,7 @@ export function validateOutput(expectedOutput: string, actualOutput: string): bo
   return expected === actual
 }
 
-export function parseTestOutput(output: string, testCases: Array<{expectedOutput: string}>): TestResult[] {
+export function parseTestOutput(output: string, testCases: TestCase[]): TestResult[] {
   // Split output by lines and filter out empty lines
   const lines = output.split('\n').filter(line => line.trim().length > 0)
   
@@ -37,7 +23,7 @@ export function parseTestOutput(output: string, testCases: Array<{expectedOutput
     results.push({
       testCase: index + 1,
       passed,
-      input: `Test case ${index + 1}`,
+      input: testCase.input,
       expectedOutput: testCase.expectedOutput,
       actualOutput: actualOutput.trim(),
       error: !passed ? `Expected: ${testCase.expectedOutput}, Got: ${actualOutput.trim()}` : undefined

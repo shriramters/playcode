@@ -36,3 +36,19 @@ export interface ProblemMetadata {
   difficulty: string
   topics: string[]
 }
+
+export interface TestResult {
+  testCase: number
+  passed: boolean
+  input: string
+  expectedOutput: string
+  actualOutput: string
+  error?: string
+}
+
+export interface ValidationResult {
+  allPassed: boolean
+  testResults: TestResult[]
+  compilationError?: string
+  runtime?: number
+}
