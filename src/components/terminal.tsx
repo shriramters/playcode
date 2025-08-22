@@ -25,8 +25,6 @@ export default function Terminal() {
   const containerRef = useRef<HTMLDivElement | null>(null)
   const messagePort = useMessagePort()
   const xtermRef = useRef<Xterm | null>(null)
-  const outputBuffer = useRef<string>('')
-  const testOutputBuffer = useRef<string>('')
   const [validationResult, setValidationResult] = useState<ValidationResult | undefined>(undefined)
   const [isRunningTests, setIsRunningTests] = useState(false)
   
@@ -40,83 +38,19 @@ export default function Terminal() {
     return newXterm
   })
 
-  const validateTestOutput = () => {
-    if (!currentProblem || !testOutputBuffer.current) {
+  const requestTestResults = () => {
+    if (!currentProblem || !messagePort) {
       return
     }
 
-    const startTime = Date.now()
-    
-    // Look for compilation or runtime errors first
-    const output = testOutputBuffer.current.toLowerCase()
-    if (output.includes('error:') || output.includes('undefined reference') || output.includes('compilation terminated')) {
-      setValidationResult({
-        allPassed: false,
-        testResults: [],
-        compilationError: testOutputBuffer.current.split('\n').find(line => 
-          line.toLowerCase().includes('error:') || 
-          line.toLowerCase().includes('undefined reference')
-        ) || 'Compilation failed'
-      })
-      return
-    }
-
-    // Extract test.wasm output specifically
-    const lines = testOutputBuffer.current.split('\n')
-    
-    // Look for the test.wasm execution section
-    const testWasmStart = lines.findIndex(line => line.includes('test.wasm'))
-    if (testWasmStart === -1) {
-      setValidationResult({
-        allPassed: false,
-        testResults: [],
-        compilationError: 'No test.wasm output found. Make sure test compilation succeeded.'
-      })
-      return
-    }
-
-    // Extract output after test.wasm execution
-    const testOutput = lines.slice(testWasmStart + 1)
-      .filter(line => {
-        const cleanLine = line.trim()
-        return cleanLine && 
-               !cleanLine.includes('Untarring') &&
-               !cleanLine.includes('Fetching') &&
-               !cleanLine.includes('clang -cc1') &&
-               !cleanLine.includes('wasm-ld') &&
-               !cleanLine.includes('done.') &&
-               !cleanLine.includes('process exited') &&
-               !cleanLine.includes('Disallowing rAF') &&
-               !cleanLine.startsWith('>')
-      })
-      .join('\n')
-
-    if (!testOutput.trim()) {
-      setValidationResult({
-        allPassed: false,
-        testResults: [],
-        compilationError: 'No test output captured. Check if your solution produces the expected output format.'
-      })
-      return
-    }
-
-    // Parse test results using the test runner
-    const testResults = testRunner.current.parseTestResults(testOutput, currentProblem.testCases)
-    const allPassed = testResults.every(r => r.passed)
-    const runtime = Date.now() - startTime
-
-    const result: ValidationResult = {
-      allPassed,
-      testResults,
-      runtime
-    }
-
-    setValidationResult(result)
-
-    // Mark problem as solved if all tests pass
-    if (allPassed && currentProblem) {
-      markProblemSolved(currentProblem.id, runtime)
-    }
+    // Request test result files from worker
+    messagePort.postMessage({ 
+      id: 'getTestFiles', 
+      data: { 
+        testCases: currentProblem.testCases,
+        numTests: currentProblem.testCases.length 
+      } 
+    })
   }
 
   useEffect(() => {
@@ -129,8 +63,6 @@ export default function Terminal() {
     // Set up message listener here
     if (messagePort) {
       xterm.clear()
-      outputBuffer.current = ''
-      testOutputBuffer.current = ''
       setValidationResult(undefined)
       setIsRunningTests(false)
       
@@ -139,28 +71,59 @@ export default function Terminal() {
           case 'write':
             const text = event.data.data
             xterm.writeln(text)
-            outputBuffer.current += text + '\n'
             
-            // Check if this is test.wasm execution output
-            if (text.includes('test.wasm') || isRunningTests) {
-              if (text.includes('test.wasm')) {
-                setIsRunningTests(true)
-                testOutputBuffer.current = '' // Reset test output buffer
-              }
-              testOutputBuffer.current += text + '\n'
+            // Check if this is test.wasm execution starting
+            if (text.includes('test.wasm')) {
+              setIsRunningTests(true)
             }
             
             // Check if test execution is complete
             if (isRunningTests && (
                 text.includes('process exited') || 
                 text.includes('RuntimeError:') ||
-                text.includes('Error:') ||
-                (text.trim() === '' && testOutputBuffer.current.includes('test.wasm')))) {
-              // Wait a bit for any remaining output, then validate
+                text.includes('Error:'))) {
+              // Wait a bit for any remaining output, then request test files
               setTimeout(() => {
-                validateTestOutput()
+                requestTestResults()
                 setIsRunningTests(false)
               }, 1000)
+            }
+            break
+
+          case 'testResults':
+            // Handle test results from worker
+            const { testFiles, error } = event.data.data
+            
+            if (error) {
+              setValidationResult({
+                allPassed: false,
+                testResults: [],
+                compilationError: error
+              })
+              return
+            }
+
+            const startTime = Date.now()
+            
+            // Parse test results from the files
+            const testResults = testRunner.current.parseTestResultsFromMemfsFiles(
+              testFiles, 
+              currentProblem.testCases
+            )
+            const allPassed = testResults.every(r => r.passed)
+            const runtime = Date.now() - startTime
+
+            const result: ValidationResult = {
+              allPassed,
+              testResults,
+              runtime
+            }
+
+            setValidationResult(result)
+
+            // Mark problem as solved if all tests pass
+            if (allPassed && currentProblem) {
+              markProblemSolved(currentProblem.id, runtime)
             }
             break
         }

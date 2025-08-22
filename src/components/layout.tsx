@@ -40,10 +40,10 @@ export function PracticeLayout(props: PracticeLayoutProps) {
         {/* Right Panel - Editor and Terminal */}
         <Col xs={5}>
           <Row className="h-100 g-2">
-            <Col xs={12} style={{ height: '45%' }}>
+            <Col xs={12} style={{ height: '400px' }}>
               {editor}
             </Col>
-            <Col xs={12} style={{ height: '55%' }}>
+            <Col xs={12} style={{ height: '500px' }}>
               <div style={{ height: '100%', overflowY: 'auto' }}>
                 {terminal}
               </div>

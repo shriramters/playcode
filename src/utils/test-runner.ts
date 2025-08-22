@@ -23,11 +23,12 @@ export class WasmTestRunner implements TestRunner {
 #include <climits>
 #include <string>
 #include <sstream>
+#include <fstream>
 using namespace std;
 
 ${solutionClass}
 
-// Test case runner that reads from predefined test cases
+// Test case runner that writes outputs to separate files
 int main() {
     Solution solution;
     
@@ -107,7 +108,9 @@ int main() {
         vector<int> nums = {${nums}};
         int target = ${target};
         vector<int> result = solution.twoSum(nums, target);
-        cout << "[" << result[0] << "," << result[1] << "]" << endl;
+        ofstream outFile("/test_output_${index + 1}.txt");
+        outFile << "[" << result[0] << "," << result[1] << "]";
+        outFile.close();
     }`
     }
     
@@ -121,7 +124,9 @@ int main() {
       const x = xMatch[1]
       return `    {
         int result = solution.reverse(${x});
-        cout << result << endl;
+        ofstream outFile("/test_output_${index + 1}.txt");
+        outFile << result;
+        outFile.close();
     }`
     }
     
@@ -135,7 +140,9 @@ int main() {
       const x = xMatch[1]
       return `    {
         bool result = solution.isPalindrome(${x});
-        cout << (result ? "true" : "false") << endl;
+        ofstream outFile("/test_output_${index + 1}.txt");
+        outFile << (result ? "true" : "false");
+        outFile.close();
     }`
     }
     
@@ -150,6 +157,66 @@ int main() {
     testCases.forEach((testCase, index) => {
       const actualOutput = lines[index] || ''
       const passed = validateOutput(testCase.expectedOutput, actualOutput)
+      
+      results.push({
+        testCase: index + 1,
+        passed,
+        input: testCase.input,
+        expectedOutput: testCase.expectedOutput,
+        actualOutput: actualOutput.trim(),
+        error: !passed ? `Expected: ${testCase.expectedOutput}, Got: ${actualOutput.trim()}` : undefined
+      })
+    })
+    
+    return results
+  }
+
+  // New method to read test results from files in memfs
+  parseTestResultsFromFiles(memfs: any, testCases: TestCase[]): TestResult[] {
+    const results: TestResult[] = []
+    
+    testCases.forEach((testCase, index) => {
+      try {
+        // Read the output file for this test case
+        const filePath = `/test_output_${index + 1}.txt`
+        const fileContents = memfs.getFileContents(filePath)
+        const actualOutput = new TextDecoder().decode(fileContents).trim()
+        
+        const passed = validateOutput(testCase.expectedOutput, actualOutput)
+        
+        results.push({
+          testCase: index + 1,
+          passed,
+          input: testCase.input,
+          expectedOutput: testCase.expectedOutput,
+          actualOutput,
+          error: !passed ? `Expected: ${testCase.expectedOutput}, Got: ${actualOutput}` : undefined
+        })
+      } catch (error) {
+        // If file doesn't exist or can't be read, mark as failed
+        results.push({
+          testCase: index + 1,
+          passed: false,
+          input: testCase.input,
+          expectedOutput: testCase.expectedOutput,
+          actualOutput: '',
+          error: `Unable to read test output file: ${error.message}`
+        })
+      }
+    })
+    
+    return results
+  }
+
+  // Method to parse test results from file contents (when files are passed from worker)
+  parseTestResultsFromMemfsFiles(testFiles: { [key: string]: string }, testCases: TestCase[]): TestResult[] {
+    const results: TestResult[] = []
+    
+    testCases.forEach((testCase, index) => {
+      const fileName = `test_output_${index + 1}.txt`
+      const actualOutput = testFiles[fileName] || ''
+      
+      const passed = validateOutput(testCase.expectedOutput, actualOutput.trim())
       
       results.push({
         testCase: index + 1,
