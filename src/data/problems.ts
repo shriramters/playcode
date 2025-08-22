@@ -38,8 +38,17 @@ using namespace std;
 class Solution {
 public:
     vector<int> twoSum(vector<int>& nums, int target) {
-        // Your code here
+        unordered_map<int, int> map;
         
+        for (int i = 0; i < nums.size(); i++) {
+            int complement = target - nums[i];
+            if (map.find(complement) != map.end()) {
+                return {map[complement], i};
+            }
+            map[nums[i]] = i;
+        }
+        
+        return {};
     }
 };
 
@@ -189,8 +198,17 @@ using namespace std;
 class Solution {
 public:
     bool isPalindrome(int x) {
-        // Your code here
+        if (x < 0) return false;
         
+        long long reversed = 0;
+        long long temp = x;
+        
+        while (temp != 0) {
+            reversed = reversed * 10 + temp % 10;
+            temp /= 10;
+        }
+        
+        return x == reversed;
     }
 };
 
