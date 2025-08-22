@@ -54,7 +54,6 @@ export function PracticePage() {
     <div className="d-flex flex-column vh-100">
       <div className="flex-grow-1">
         <PracticeLayout 
-          problemList={<BackButton />}
           problemDescription={<ProblemDescription />}
           editor={<Editor />}
           terminal={<Terminal />}

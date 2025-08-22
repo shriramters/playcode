@@ -9,7 +9,7 @@ export default function Header() {
   return (
     <Navbar bg={theme} variant={theme} expand="lg" className="shadow-sm">
       <Container fluid>
-        <Navbar.Brand href="#" className="d-flex align-items-center gap-2">
+        <Navbar.Brand href="/" className="d-flex align-items-center gap-2">
           <FaCode />
           Coding Practice
         </Navbar.Brand>

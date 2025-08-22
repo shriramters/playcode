@@ -21,25 +21,19 @@ export default function Layout(props: LayoutProps) {
 }
 
 interface PracticeLayoutProps {
-  problemList: React.ReactNode
   problemDescription: React.ReactNode
   editor: React.ReactNode
   terminal: React.ReactNode
 }
 
 export function PracticeLayout(props: PracticeLayoutProps) {
-  const { problemList, problemDescription, editor, terminal } = props
+  const { problemDescription, editor, terminal } = props
   
   return (
     <Container fluid className="d-flex flex-column vh-100">
       <Row className="flex-grow-1 g-2 py-2">
-        {/* Left Panel - Problem List */}
-        <Col xs={3}>
-          {problemList}
-        </Col>
-        
         {/* Middle Panel - Problem Description */}
-        <Col xs={4}>
+        <Col xs={7}>
           {problemDescription}
         </Col>
         
