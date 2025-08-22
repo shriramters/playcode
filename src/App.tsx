@@ -1,16 +1,14 @@
 import React, { useEffect } from 'react'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 
 import clang from './assets/clang.wasm?url'
 import lld from './assets/lld.wasm?url'
 import memfs from './assets/memfs.wasm?url'
 import sysroot from './assets/sysroot.tar?url'
 
-import { LeetCodeLayout } from './components/layout'
 import Header from './components/header'
-import Editor from './components/editor'
-import Terminal from './components/terminal'
-import ProblemList from './components/problem-list'
-import ProblemDescription from './components/problem-description'
+import { HomePage } from './components/home-page'
+import { PracticePage } from './components/practice-page'
 
 import { useTheme } from './core/theme'
 
@@ -24,16 +22,16 @@ export function App() {
   }, [theme])
 
   return (
-    <div className="d-flex flex-column vh-100">
-      <Header />
-      <div className="flex-grow-1">
-        <LeetCodeLayout 
-          problemList={<ProblemList />}
-          problemDescription={<ProblemDescription />}
-          editor={<Editor />}
-          terminal={<Terminal />}
-        />
+    <Router>
+      <div className="d-flex flex-column vh-100">
+        <Header />
+        <div className="flex-grow-1">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/practice/:problemId" element={<PracticePage />} />
+          </Routes>
+        </div>
       </div>
-    </div>
+    </Router>
   )
 }

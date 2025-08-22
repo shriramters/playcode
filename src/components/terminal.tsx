@@ -4,7 +4,7 @@ import { Terminal as Xterm } from '@xterm/xterm'
 import { FitAddon } from '@xterm/addon-fit'
 import '@xterm/xterm/css/xterm.css'
 import { useMessagePort } from '../module/runner'
-import { useProblemStore } from '../module/problems'
+import { useProblemStore, useProblemProgress } from '../module/problems'
 import { parseTestOutput, ValidationResult } from '../utils/validation'
 import TestResults from './test-results'
 
@@ -27,7 +27,8 @@ export default function Terminal() {
   const outputBuffer = useRef<string>('')
   const [validationResult, setValidationResult] = useState<ValidationResult | undefined>(undefined)
   
-  const { currentProblem, markProblemSolved } = useProblemStore()
+  const { currentProblem } = useProblemStore()
+  const { markProblemSolved } = useProblemProgress()
 
   const [xterm] = useState(() => {
     const newXterm = new Xterm()

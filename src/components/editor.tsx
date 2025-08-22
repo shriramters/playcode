@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { Card, Button } from 'react-bootstrap'
 import { LanguageExt, useRunner } from '../module'
-import { useProblemStore } from '../module/problems'
+import { useProblemStore, useProblemProgress } from '../module/problems'
 import LanguageSelector from './langauge-selector'
 import MonacoEditor from '@monaco-editor/react'
 import { IoPlay, IoRefresh } from 'react-icons/io5'
@@ -14,7 +14,8 @@ export default function Editor() {
   const runCode = useRunner((state) => state.runCode)
   const theme = useTheme((state) => state.theme)
   
-  const { currentProblem, markProblemAttempted } = useProblemStore()
+  const { currentProblem } = useProblemStore()
+  const { markProblemAttempted } = useProblemProgress()
 
   // Load problem template when problem changes
   useEffect(() => {

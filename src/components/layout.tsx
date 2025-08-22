@@ -20,14 +20,14 @@ export default function Layout(props: LayoutProps) {
   )
 }
 
-interface LeetCodeLayoutProps {
+interface PracticeLayoutProps {
   problemList: React.ReactNode
   problemDescription: React.ReactNode
   editor: React.ReactNode
   terminal: React.ReactNode
 }
 
-export function LeetCodeLayout(props: LeetCodeLayoutProps) {
+export function PracticeLayout(props: PracticeLayoutProps) {
   const { problemList, problemDescription, editor, terminal } = props
   
   return (

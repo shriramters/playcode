@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, ListGroup, Badge, Row, Col } from 'react-bootstrap'
-import { useProblemStore } from '../module/problems'
+import { useProblemStore, useProblemProgress } from '../module/problems'
 import { Difficulty } from '../types/problems'
 import { FaCheck, FaClock } from 'react-icons/fa'
 
@@ -18,7 +18,8 @@ const getDifficultyColor = (difficulty: Difficulty) => {
 }
 
 export default function ProblemList() {
-  const { problems, currentProblem, setCurrentProblem, getProgress } = useProblemStore()
+  const { problems, currentProblem, setCurrentProblem } = useProblemStore()
+  const { getProgress } = useProblemProgress()
 
   return (
     <Card className="h-100">

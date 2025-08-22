@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Card, Badge, Button, Collapse, Alert } from 'react-bootstrap'
-import { useProblemStore } from '../module/problems'
+import { useProblemStore, useProblemProgress } from '../module/problems'
 import { Difficulty } from '../types/problems'
 import { FaEye, FaEyeSlash, FaLightbulb } from 'react-icons/fa'
 
@@ -18,7 +18,8 @@ const getDifficultyColor = (difficulty: Difficulty) => {
 }
 
 export default function ProblemDescription() {
-  const { currentProblem, getProgress } = useProblemStore()
+  const { currentProblem } = useProblemStore()
+  const { getProgress } = useProblemProgress()
   const [showHints, setShowHints] = useState(false)
 
   if (!currentProblem) {

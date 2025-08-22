@@ -11,7 +11,7 @@ export default function Header() {
       <Container fluid>
         <Navbar.Brand href="#" className="d-flex align-items-center gap-2">
           <FaCode />
-          LeetCode Practice
+          Coding Practice
         </Navbar.Brand>
         <Nav>
           <Button variant={theme} onClick={toggleTheme} className="me-2">

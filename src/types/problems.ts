@@ -29,3 +29,10 @@ export interface ProblemProgress {
   lastAttempt?: Date
   bestTime?: number
 }
+
+export interface ProblemMetadata {
+  id: string
+  title: string
+  difficulty: string
+  topics: string[]
+}
