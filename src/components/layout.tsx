@@ -19,3 +19,42 @@ export default function Layout(props: LayoutProps) {
     </Container>
   )
 }
+
+interface LeetCodeLayoutProps {
+  problemList: React.ReactNode
+  problemDescription: React.ReactNode
+  editor: React.ReactNode
+  terminal: React.ReactNode
+}
+
+export function LeetCodeLayout(props: LeetCodeLayoutProps) {
+  const { problemList, problemDescription, editor, terminal } = props
+  
+  return (
+    <Container fluid className="d-flex flex-column vh-100">
+      <Row className="flex-grow-1 g-2 py-2">
+        {/* Left Panel - Problem List */}
+        <Col xs={3}>
+          {problemList}
+        </Col>
+        
+        {/* Middle Panel - Problem Description */}
+        <Col xs={4}>
+          {problemDescription}
+        </Col>
+        
+        {/* Right Panel - Editor and Terminal */}
+        <Col xs={5}>
+          <Row className="h-100 g-2">
+            <Col xs={12} className="h-50">
+              {editor}
+            </Col>
+            <Col xs={12} className="h-50">
+              {terminal}
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+    </Container>
+  )
+}

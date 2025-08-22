@@ -1,6 +1,6 @@
 import React from 'react'
 import { Navbar, Nav, Container, Button } from 'react-bootstrap'
-import { FaGithub, FaSun, FaMoon } from 'react-icons/fa'
+import { FaGithub, FaSun, FaMoon, FaCode } from 'react-icons/fa'
 import { useTheme } from '../core/theme'
 
 export default function Header() {
@@ -9,7 +9,10 @@ export default function Header() {
   return (
     <Navbar bg={theme} variant={theme} expand="lg" className="shadow-sm">
       <Container fluid>
-        <Navbar.Brand href="#">PlayCode</Navbar.Brand>
+        <Navbar.Brand href="#" className="d-flex align-items-center gap-2">
+          <FaCode />
+          LeetCode Practice
+        </Navbar.Brand>
         <Nav>
           <Button variant={theme} onClick={toggleTheme} className="me-2">
             {theme === 'light' ? <FaMoon /> : <FaSun />}
