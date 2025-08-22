@@ -46,11 +46,13 @@ export function LeetCodeLayout(props: LeetCodeLayoutProps) {
         {/* Right Panel - Editor and Terminal */}
         <Col xs={5}>
           <Row className="h-100 g-2">
-            <Col xs={12} className="h-50">
+            <Col xs={12} style={{ height: '45%' }}>
               {editor}
             </Col>
-            <Col xs={12} className="h-50">
-              {terminal}
+            <Col xs={12} style={{ height: '55%' }}>
+              <div style={{ height: '100%', overflowY: 'auto' }}>
+                {terminal}
+              </div>
             </Col>
           </Row>
         </Col>
